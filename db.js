@@ -9,22 +9,5 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
-async function initializeDatabase() {
-  try {
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS todos (
-        id SERIAL PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        completed BOOLEAN DEFAULT FALSE
-      );
-    `);
-
-    console.log("Database initialized.");
-  } catch (err) {
-    console.error("Initialization failed:", err);
-  }
-}
-
-initializeDatabase();
 
 module.exports = pool;
