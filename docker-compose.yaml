@@ -1,0 +1,46 @@
+services:
+  todo-frontend:
+    build:
+      context: .
+    image: todo-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: todo-db
+    networks:
+      todo:
+        ipv4_address: 192.168.117.3
+        aliases:
+          - todo-frontend
+    depends_on:
+      - todo-db
+
+      #DB SERVICE starts from here
+
+  todo-db:
+    image: postgres:18
+    networks:
+      todo:
+        ipv4_address: 192.168.117.4
+        aliases:
+          - todo-db
+    volumes:
+      - "todo-db:/var/lib/postgresql"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: todoapp
+      POSTGRES_PASSWORD: "123"
+
+# Network and Storage Configuration
+
+volumes:
+  todo-db:
+
+networks:
+  todo:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.117.0/24
+          gateway: 192.168.117.1
+
