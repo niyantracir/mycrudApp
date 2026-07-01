@@ -1,4 +1,4 @@
-A small to app just to practice the docker and kubernetes.
+A small CRUD app just to practice the docker and kubernetes.
 
 Create the database and table before using the app.
 
