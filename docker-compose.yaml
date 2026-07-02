@@ -1,41 +1,58 @@
 services:
-  todo-frontend:
+
+  frontend:
     build:
       context: .
-    image: todo-frontend
-    ports:
-      - "3000:3000"
+      dockerfile: Dockerfile
     environment:
       DB_HOST: todo-db
     networks:
       todo:
-        ipv4_address: 192.168.117.3
-        aliases:
-          - todo-frontend
-    depends_on:
-      - todo-db
-
-      #DB SERVICE starts from here
-
-  todo-db:
-    image: postgres:18
-    networks:
-      todo:
         ipv4_address: 192.168.117.4
         aliases:
-          - todo-db
+          - todo-frontend
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - database
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 5
+
+  database:
+    image: postgres:18
     volumes:
       - "todo-db:/var/lib/postgresql"
+    networks:
+      todo:
+        ipv4_address: 192.168.117.5
+        aliases:
+          - todo-db
     environment:
       POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
       POSTGRES_DB: todoapp
-      POSTGRES_PASSWORD: "123"
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
 
-# Network and Storage Configuration
 
-volumes:
-  todo-db:
-
+# networks start here
+#
 networks:
   todo:
     driver: bridge
@@ -43,4 +60,10 @@ networks:
       config:
         - subnet: 192.168.117.0/24
           gateway: 192.168.117.1
+
+
+# volumes start here
+#
+volumes:
+  todo-db:
 
