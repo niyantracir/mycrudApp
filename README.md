@@ -1,44 +1,92 @@
-A small CRUD app just to practice the docker and kubernetes.
+# A small CRUD app just to practice Docker.
 
-Create the database and table before using the app.
+## Create the database and table before using the app.
 
-Method @1
+---
 
-#####################   Automatic   Process    #########################################
+## Method @1
 
-  STEP-1 : Download both Dokerfile and docker-compose.yaml files in a empty folder/Directory.
+### Automatic Process
 
-  STEP-2 : Run the below command to build and run containers and Check: http://<machine-ip>:3000
-              [Shell] $ docker compose up -d 
+**STEP 1:** Download both `Dockerfile` and `docker-compose.yaml` files into an empty folder/directory.
 
-################################   END   ################################################
+**STEP 2:** Run the following command to build and run the containers:
 
+```bash
+docker compose up -d
+```
 
+**STEP 3:** Check the application at:
 
-METHOD @2 
+```text
+http://<machine-ip>:3000
+```
 
+---
 
-############################ Manual  PROCESS #################################
+## Method @2
 
-#1 Create a docker image using the docker file. RUN below command of that.
-  $ docker build -t imageName:v1  -f Dockerfile .
-  
-#2 Pull the Postgres Sql DB image. RUN below command of that.
-  $ docker pull postgres
+### Manual Process
 
-#3 Create a isolated network for conatainers. RUN below command.
-  $ docker network create todo
-  
-#4 Run the container from the image. modify and RUN  below command.
-  $ docker run -d --name todo-db -v todo-db:/var/lib/postgresql --network todo -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=123 -e POSTGRES_DB=todoapp postgres
+### 1. Create a Docker Image
 
-#6 After exiting from container shell. Run the below command.
-  $ docker run -d --name todo-frontend -p 3000:3000 -e DB_HOST=todo-db --network todo --rm imageName:v1
+Use the following command to build the Docker image:
 
-#7 Check the on the browser it should work.... "http://<ip-or-localhost>:3000"
+```bash
+docker build -t imageName:v1 -f Dockerfile .
+```
 
-########################### END ###############################################################################
+### 2. Pull the PostgreSQL Image
 
+Pull the PostgreSQL Docker image:
 
+```bash
+docker pull postgres
+```
 
+### 3. Create an Isolated Network
 
+Create a Docker network for the containers:
+
+```bash
+docker network create todo
+```
+
+### 4. Run the PostgreSQL Container
+
+Run the PostgreSQL database container:
+
+```bash
+docker run -d --name todo-db \
+-v todo-db:/var/lib/postgresql \
+--network todo \
+-e POSTGRES_USER=postgres \
+-e POSTGRES_PASSWORD=123 \
+-e POSTGRES_DB=todoapp \
+postgres
+```
+
+### 5. Run the Application Container
+
+Run the application container:
+
+```bash
+docker run -d --name todo-frontend \
+-p 3000:3000 \
+-e DB_HOST=todo-db \
+--network todo \
+--rm \
+imageName:v1
+```
+
+### 6. Check the Application
+
+Open the application in your browser:
+
+```text
+http://<ip-or-localhost>:3000
+```
+
+---
+
+## END
